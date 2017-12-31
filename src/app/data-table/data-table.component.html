@@ -1,0 +1,67 @@
+<!-- <div>
+  <fieldset>
+      <legend> Search Criteria</legend>
+      <div class="row">
+          <div *ngFor="let head of Data.Headers">
+              <ng-container *ngIf="head.IsSearchable">
+
+                  <div class="col-sm-4">
+                      <label>{{head.Label}}</label>
+                      <input type="text" [attr.id]="head.Name" [(ngModel)]="head.SearchedValue" />
+                  </div>
+
+              </ng-container>
+          </div>
+      </div>
+      <br>
+      <div class="row">
+          <button (click)="SearchGrid($event)">Search</button>
+          <button (click)="ClearSearch($event)">Clear</button>
+      </div>
+  </fieldset>
+</div>
+
+<hr>  -->
+<div *ngIf="Data.HasRows">
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th *ngFor="let head of Data.Headers">
+                    {{head.Label}}
+                </th>
+            </tr>
+            <tr>
+                <th *ngFor="let head of Data.Headers">
+                    <ng-container *ngIf="head.IsSearchable">
+                        <input type="text" [attr.id]="head.Name" class="form-control" [attr.placeholder]="head.Label" [(ngModel)]="head.SearchedValue">
+                    </ng-container>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let row of Data.Rows|dataFilter:GetFilterValue()">
+                <tr [className]="setRowClass(row)">
+                    <ng-container *ngFor="let head of Data.Headers">
+                        <td *ngIf="!(head.IsAction && head.IsImage)">
+                            {{getValue(row,head.Name)}}
+                        </td>
+
+                        <td *ngIf="head.IsAction">
+                            <div style="float:left" *ngFor="let action of row.Actions">
+                                <button [className]="setClass(action)" [attr.title]="action" (click)="PerformAction(row,action)">
+                                </button>
+                            </div>
+                        </td>
+                        <td *ngIf="head.IsImage">
+                            <img [src]="getValue(row,head.Name)" height="100" width="100"/>
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="!Data.HasRows">
+    No Records Found
+</div>
